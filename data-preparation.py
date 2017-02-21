@@ -23,6 +23,7 @@ y = dataset.iloc[:, 3].values
 
 ################ Missing data #####################
 
+####### Numerical data #####
 #Here using Imputer with capital I (case-sensitive) 
 #to impute missing values
 from sklearn.preprocessing import Imputer
@@ -32,5 +33,12 @@ imputer = Imputer(missing_values = 'NaN', strategy = 'mean', axis = 0)
 
 #apply this object to columns 2 and 3 of array X
 imputer = imputer.fit(x[:, 1:3])
-#apply transformation to original array
+#apply transform method of imputer object to original array
 x[:, 1:3] = imputer.transform[:, 1:3]
+
+####### Categorical data #####
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+
+#Create object to build dummy variables for categorical variables
+#in independant features array X
+labelencoder_x = LabelEncoder()
