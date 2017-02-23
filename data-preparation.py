@@ -11,9 +11,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
+
+#Define parameters
+datafile = 'Data.csv'
+
+
 ################# import dataset #######################
 
-dataset = pd.read_csv('Data.csv')
+dataset = pd.read_csv(datafile)
 
 ############### convert to array format required by Numpy ###
 #[:,:-1] means we take all rows ":"
@@ -57,6 +62,12 @@ x = onehotencoder.fit_transform(x).toarray()
 y = labelencoder.fit_transform(y)
 
 #################### Splitting dataset into Test and Train #################
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 
 x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2,random_state=0)
+
+#################### Feature Scaling #########################################
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+x_train = sc.fit_transform(x_train)
+x_test = sc.transform(x_test)
