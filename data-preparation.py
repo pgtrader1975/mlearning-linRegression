@@ -11,9 +11,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
+
+#Define parameters
+datafile = 'Data.csv'
+
+
 ################# import dataset #######################
 
-dataset = pd.read_csv('Data.csv')
+dataset = pd.read_csv(datafile)
 
 ############### convert to array format required by Numpy ###
 #[:,:-1] means we take all rows ":"
@@ -21,7 +26,7 @@ dataset = pd.read_csv('Data.csv')
 x = dataset.iloc[:, :-1].values
 y = dataset.iloc[:, 3].values
 
-################ Missing data #####################
+###################### Missing data ###################################
 
 ####### Numerical data #####
 #Here using Imputer with capital I (case-sensitive) 
@@ -34,11 +39,35 @@ imputer = Imputer(missing_values = 'NaN', strategy = 'mean', axis = 0)
 #apply this object to columns 2 and 3 of array X
 imputer = imputer.fit(x[:, 1:3])
 #apply transform method of imputer object to original array
-x[:, 1:3] = imputer.transform[:, 1:3]
+x[:, 1:3] = imputer.transform(x[:, 1:3])
 
-####### Categorical data #####
+###################### Encoding Categorical data ################################
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 
-#Create object to build dummy variables for categorical variables
+#Define object to create integer labels for categorical variables
 #in independant features array X
-labelencoder_x = LabelEncoder()
+labelencoder = LabelEncoder()
+
+#Fist convert categorical labels into integer labels for features array X
+x[:,0] = labelencoder.fit_transform(x[:,0])
+
+#Next define an object to build dummy variables
+#Here we are deifining the object to work with 1-d array 
+#ie. feature in X with index 0
+onehotencoder = OneHotEncoder(categorical_features=[0])
+
+x = onehotencoder.fit_transform(x).toarray()
+
+#Now converting response variable  y into integers
+y = labelencoder.fit_transform(y)
+
+#################### Splitting dataset into Test and Train #################
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2,random_state=0)
+
+#################### Feature Scaling #########################################
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+x_train = sc.fit_transform(x_train)
+x_test = sc.transform(x_test)
